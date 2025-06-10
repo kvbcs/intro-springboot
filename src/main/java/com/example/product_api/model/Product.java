@@ -35,6 +35,10 @@ public List<Product> getSources() {
     return sources;
 }
 
+public void setSources(List<Product> sources) {
+    this.sources = sources;
+}
+
 
 //Getters et setters
 //comme les variables sont private, pour les utiliser ailleurs il faut faire des getters et setters

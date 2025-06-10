@@ -52,12 +52,55 @@ public Product duplicateById(@PathVariable Long id) {
     return repository.save(duplicatedProduct);
 }
 
-@PostMapping("/bundle/{id}")
-public Product createBundle(@RequestBody Long id) {
-    List<Product> bundle = new ArrayList<>();
-    Product existing = repository.findById(id).orElseThrow();
-    bundle.add(existing);
-    return repository.saveAll(bundle);
+@PostMapping("/bundle")
+    public Product createBundle(@RequestBody List<Long> sourceIds) {
+        // Récupère tous les produits correspondant aux ids reçus
+        List<Product> sources = repository.findAllById(sourceIds);
+        if (sources.size() != sourceIds.size()) {
+            throw new RuntimeException("Certains produits sources n'ont pas été trouvés");
+        }
+        if (hasRecursion(sources, sources)) {
+            throw new RuntimeException("Boucle détectée dans les produits sources");
+        }
 
+        // Construit le nom du bundle en concaténant les noms des produits sources avec un " + "
+        StringBuilder bundleName = new StringBuilder();
+        double totalPrice = 0;
+
+        for (Product p : sources) {
+            if (bundleName.length() > 0) {
+                bundleName.append(" + ");
+            }
+            bundleName.append(p.getName());
+            totalPrice += p.getPrice();
+        }
+        Product bundle = new Product();
+        bundle.setName(bundleName.toString());
+        bundle.setPrice(totalPrice);
+        bundle.setSources(sources);
+
+        // Sauvegarde le bundle en base et le retourne
+        return repository.save(bundle);
+    }
+    private boolean hasRecursion(List<Product> productsToCheck, List<Product> originalSources) {
+        for (Product product : productsToCheck) {
+            List<Product> sources = product.getSources();
+
+            // Si ce produit a des sources associées
+            if (sources != null && !sources.isEmpty()) {
+                for (Product source : sources) {
+                    // Si une source fait partie des produits originaux, on a une boucle
+                    if (originalSources.contains(source)) {
+                        return true;
+                    }
+                   
+                    if (hasRecursion(List.of(source), originalSources)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false; 
+    }
 }
-}
+
