@@ -1,4 +1,5 @@
 package com.example.product_api.controller;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.web.bind.annotation.*;
 import com.example.product_api.model.Product;
@@ -40,5 +41,23 @@ public class ProductController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         repository.deleteById(id);
+    }
+    
+@PostMapping("/{id}/duplicate")
+public Product duplicateById(@PathVariable Long id) {
+    Product existing = repository.findById(id).orElseThrow();
+    Product duplicatedProduct = new Product();
+    duplicatedProduct.setName(existing.getName());
+    duplicatedProduct.setPrice(existing.getPrice());
+    return repository.save(duplicatedProduct);
+}
+
+@PostMapping("/bundle/{id}")
+public Product createBundle(@RequestBody Long id) {
+    List<Product> bundle = new ArrayList<>();
+    Product existing = repository.findById(id).orElseThrow();
+    bundle.add(existing);
+    return repository.saveAll(bundle);
+
 }
 }
