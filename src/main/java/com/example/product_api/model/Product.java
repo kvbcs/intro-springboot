@@ -27,7 +27,7 @@ private double price;
 public Product() {
 }
 
-public Product(String name, double price) {
+public Product(Long id, String name, double price) {
     this.name = name;
     this.price = price;
 }
