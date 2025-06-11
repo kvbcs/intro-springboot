@@ -1,7 +1,5 @@
 package com.example;
 
-import java.lang.reflect.Array;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
