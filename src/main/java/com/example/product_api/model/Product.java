@@ -23,6 +23,15 @@ private Long id;
 private String name;
 private double price;
 
+//Constructor
+public Product() {
+}
+
+public Product(String name, double price) {
+    this.name = name;
+    this.price = price;
+}
+
 @ManyToMany 
     @JoinTable( 
         name = "product_sources", 

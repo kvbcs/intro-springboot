@@ -1,5 +1,4 @@
 package com.example.product_api.controller;
-import java.util.ArrayList;
 import java.util.List;
 import org.springframework.web.bind.annotation.*;
 import com.example.product_api.model.Product;
@@ -45,7 +44,7 @@ public class ProductController {
     
 @PostMapping("/{id}/duplicate")
 public Product duplicateById(@PathVariable Long id) {
-    Product existing = repository.findById(id).orElseThrow();
+    Product existing = repository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
     Product duplicatedProduct = new Product();
     duplicatedProduct.setName(existing.getName());
     duplicatedProduct.setPrice(existing.getPrice());
